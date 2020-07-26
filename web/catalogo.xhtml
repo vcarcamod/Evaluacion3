@@ -1,0 +1,58 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Evaluación 3</title>
+    </h:head>
+    <h:body>
+        <p:tabMenu activeIndex="#{param.i}">
+            <p:menuitem value="Inicio" outcome="index.xhtml" icon="pi pi-star">
+                <f:param name="i" value="0" />
+            </p:menuitem>
+            <p:menuitem value="Catálogo" outcome="catalogo.xhtml" icon="pi pi-search">
+                <f:param name="i" value="1" />
+            </p:menuitem>
+            <p:menuitem value="Pedidos" outcome="pedidos.xhtml" icon="pi pi-file">
+                <f:param name="i" value="2" />
+            </p:menuitem>
+        </p:tabMenu>
+        <h1>Catálogo de productos</h1>
+        <h:form id="formAgrega">
+            <h:panelGrid columns="2" cellpadding="5">
+                <h:outputLabel for="nombre" value="Nombre Producto:" />
+                <p:inputText id="nombre" value="#{productosMB.producto.nombre}" required="true" label="nombre" />
+
+                <h:outputLabel for="descripcion" value="Descripcion del producto:" />
+                <p:inputText id="descripcion" value="#{productosMB.producto.descripcion}" required="true" label="descripcion" />
+
+                <h:outputLabel for="precio" value="Precio:" />
+                <p:inputText id="precio" value="#{productosMB.producto.precio}" required="true" label="precio" />
+                
+                <f:facet name="footer">
+                    <p:commandButton value="Agregar Nuevo producto" update="formAgrega, :formLista" action="#{productosMB.registrarProducto}"
+                                     oncomplete="handleLoginRequest(xhr, status, args)" />
+                </f:facet>
+            </h:panelGrid>
+        </h:form>
+        <h:form id="formLista">
+            <p:dataTable id="tabla" value="#{productosMB.productos}" var="producto">
+                <p:column headerText="Codigo">
+                    <p:outputLabel value="#{producto.id}" />
+                </p:column>
+                <p:column headerText="Producto">
+                    <p:outputLabel value="#{producto.nombre}" />
+                </p:column>
+                <p:column headerText="Descripción">
+                    <p:outputLabel value="#{producto.descripcion}" />
+                </p:column>
+                <p:column headerText="Precio">
+                    <p:outputLabel value="#{producto.precio}" />
+                </p:column>
+            </p:dataTable>
+        </h:form>
+    </h:body>
+</html>
+

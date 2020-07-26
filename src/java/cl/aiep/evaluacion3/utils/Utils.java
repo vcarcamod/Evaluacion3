@@ -21,4 +21,14 @@ public class Utils {
             default: return -1;
         }
     }
+    
+    public static Estado getEstado(int e){
+        switch(e){
+            case 0: return Estado.PENDIENTE;
+            case 1: return Estado.ACEPTADO;
+            case 2: return Estado.RECHAZADO;
+            case 3: return Estado.ENTREGADO;
+            default: return null;
+        }
+    }
 }

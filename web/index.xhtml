@@ -1,12 +1,155 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html">
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
     <h:head>
-        <title>Facelet Title</title>
+        <script type="text/javascript">
+            function handleLoginRequest(xhr, status, args) {
+                if(args.validationFailed || !args.loggedIn) {
+                    PF('dlg').jq.effect("shake", {times:5}, 100);
+                }
+                else {
+                    PF('dlg').hide();
+                    $('#loginLink').fadeOut();
+                }
+            }
+        </script>
+        <style>
+            .msj_error_login{
+                color: red;
+                text-align: center;
+                width: 100%;
+            }
+        </style>
+        <title>Evaluacion 3</title>
     </h:head>
-    <h:body>
-        Hello from Facelets
+    <h:body id="content">
+      
+    <h:form>
+        <p:commandLink value="Login" update=":formLogin, :mensajes" onclick="PF('dlg').show();" title="login" />
+        <br />
+        <h:outputLink value="faces/registrar.xhtml" title="registrar">
+        Registrar Usuario
+        </h:outputLink>
+    </h:form>
+    <p:outputPanel id="mensajesGeneral" rendered="#{usuarioMB.mensaje != ''}">
+        <p:outputLabel class="msj_error_login" value="#{usuarioMB.mensaje}" />
+    </p:outputPanel>
+        <p:growl id="growl" sticky="true" showDetail="true" life="3000" />
+        <p:dialog header="Login" widgetVar="dlg" resizable="false">
+            <p:ajax event="close" listener="#{usuarioMB.limpiaLogin}"/>
+            <h:form id="formLogin">
+            <h:panelGrid columns="2" cellpadding="5">
+                <h:outputLabel for="username" value="Username:" />
+                <p:inputText id="username" value="#{usuarioMB.usuario.usuario}" required="true" label="username" />
+
+                <h:outputLabel for="password" value="Password:" />
+                <p:password id="password" value="#{usuarioMB.usuario.password}" required="true" label="password" />
+
+                <f:facet name="footer">
+                    <p:commandButton value="Login" update=":growl, :mensajes" action="#{usuarioMB.login}"
+                                     oncomplete="handleLoginRequest(xhr, status, args)" />
+                </f:facet>
+            </h:panelGrid>
+            </h:form>
+            <p:outputPanel id="mensajes" rendered="#{usuarioMB.mensaje != ''}">
+                <p:outputLabel class="msj_error_login" value="#{usuarioMB.mensaje}" />
+            </p:outputPanel>
+        </p:dialog>
+        <br />
+        <h1>Catálogo de Productos</h1><hr />
+        <h:form id="formLista">
+            <p:dataTable id="tabla" value="#{productosMB.productos}" var="producto">
+                <p:column headerText="Codigo">
+                    <p:outputLabel value="#{producto.id}" />
+                </p:column>
+                <p:column headerText="Producto">
+                    <p:outputLabel value="#{producto.nombre}" />
+                </p:column>
+                <p:column headerText="Descripción">
+                    <p:outputLabel value="#{producto.descripcion}" />
+                </p:column>
+                <p:column headerText="Precio">
+                    <p:outputLabel value="#{producto.precio}" />
+                </p:column>
+                <p:column headerText="Agregar al pedido" rendered="#{pedidoMB.pedido.cliente != null}">
+                    <p:commandButton value="Agregar" update=":panelCarro, :#{p:component('mensajesPedido')}, :#{p:component('mensajesCarro')}" actionListener="#{pedidoMB.agregarProducto(producto)}" />
+                </p:column>
+            </p:dataTable>
+        </h:form>
+        <p:outputPanel id="mensajesPedido">
+            <p:outputLabel class="msj_error_login" value="#{pedidoMB.mensaje}" />
+        </p:outputPanel>
+        
+        <p:panel id="panelCarro" rendered="#{pedidoMB.pedido.cliente != null}">
+            <h1>Carro de Compras</h1>
+            <h:panelGrid columns="2" cellpadding="5">
+                <h:outputLabel for="email" value="Email:" />
+                <p:outputLabel id="email" value="#{clienteMB.cliente.email}" />
+
+                <h:outputLabel for="nombre" value="Nombre:" />
+                <p:outputLabel id="nombre" value="#{clienteMB.cliente.nombre}" />
+
+                <h:outputLabel for="apellido" value="Apellido" />
+                <p:outputLabel id="apellido" value="#{clienteMB.cliente.apellido}" />                
+            </h:panelGrid>
+
+            <h:form id="formCarro">
+                <p:dataTable id="tablaCarro" value="#{pedidoMB.pedido.productos}" var="producto">
+                    <p:column headerText="Codigo">
+                        <p:outputLabel value="#{producto.id}" />
+                    </p:column>
+                    <p:column headerText="Producto">
+                        <p:outputLabel value="#{producto.nombre}" />
+                    </p:column>
+                    <p:column headerText="Descripción">
+                        <p:outputLabel value="#{producto.descripcion}" />
+                    </p:column>
+                    <p:column headerText="Precio">
+                        <p:outputLabel value="#{producto.precio}" />
+                    </p:column>
+                    <p:column headerText="Quitar del pedido">
+                        <p:commandButton value="Quitar" update=":formCarro, :#{p:component('mensajesPedido')}, :#{p:component('mensajesCarro')}" actionListener="#{pedidoMB.quitarProducto(producto)}" />
+                    </p:column>
+                </p:dataTable>
+            </h:form>     
+            
+            <p:outputPanel id="mensajesCarro">
+                    <p:outputLabel class="msj_error_login" value="#{pedidoMB.mensajeCarro}" />
+            </p:outputPanel>
+            
+            <h:form id="btnConfirma">
+                <p:commandButton value="Confirmar Pedido"
+                    update=":#{p:component('panelCarro')}, :#{p:component('mensajesPedido')}, :#{p:component('mensajesCarro')}" 
+                    actionListener="#{pedidoMB.confirmarPedido}"
+                    disabled="#{pedidoMB.pedido.productos.size() == 0}" />
+            </h:form>
+        </p:panel>
+        
+        <h:panelGroup id="panelCliente" rendered="#{pedidoMB.pedido.cliente == null}">
+            <h1>Para crear un pedido debe indicar los siguientes datos</h1>
+            <h:form id="formCreaCliente">
+            <h:panelGrid columns="2" cellpadding="5">
+                <h:outputLabel for="email" value="Email:" />
+                <p:inputText id="email" value="#{clienteMB.cliente.email}" required="true" label="email" />
+
+                <h:outputLabel for="nombre" value="Nombre:" />
+                <p:inputText id="nombre" value="#{clienteMB.cliente.nombre}" required="true" label="nombre" />
+
+                <h:outputLabel for="apellido" value="Apellido" />
+                <p:inputText id="apellido" value="#{clienteMB.cliente.apellido}" required="true" label="apellido" />
+                
+                <f:facet name="footer">
+                    <p:commandButton value="Registrar" update=":content" action="#{pedidoMB.iniciarPedido(clienteMB)}" />
+                </f:facet>
+            </h:panelGrid>
+        </h:form>
+            <p:outputPanel id="mensajesCliente" rendered="#{clienteMB.mensaje != ''}">
+                <p:outputLabel class="msj_error_login" value="#{clienteMB.mensaje}" />
+            </p:outputPanel>
+        </h:panelGroup>
     </h:body>
 </html>
 

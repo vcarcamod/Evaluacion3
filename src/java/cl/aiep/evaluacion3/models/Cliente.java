@@ -22,6 +22,10 @@ public class Cliente {
         this.apellido = apellido;
     }
 
+    public Cliente() {
+    
+    }
+
     public int getId() {
         return id;
     }

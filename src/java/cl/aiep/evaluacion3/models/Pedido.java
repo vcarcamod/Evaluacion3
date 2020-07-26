@@ -5,6 +5,8 @@
  */
 package cl.aiep.evaluacion3.models;
 
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -15,16 +17,30 @@ import java.util.Calendar;
 public class Pedido {
     private int id;
     private Cliente cliente;
-    private Calendar fecha;
+    private Date fecha;
     private Estado estado;
     private ArrayList<Producto> productos;
 
-    public Pedido(int id, Cliente cliente, Calendar fecha, Estado estado, ArrayList<Producto> productos) {
+    public Pedido(int id, Cliente cliente, Date fecha, Estado estado, ArrayList<Producto> productos) {
         this.id = id;
         this.cliente = cliente;
         this.fecha = fecha;
         this.estado = estado;
         this.productos = productos;
+    }
+
+    public Pedido() {
+        java.util.Date d = new java.util.Date();
+        this.fecha = new Date(d.getTime());
+        this.estado = Estado.PENDIENTE;
+        this.productos = new ArrayList<Producto>();
+    }
+
+    public Pedido(int id, Cliente cliente, Date date, Estado estado) {
+        this.id = id;
+        this.cliente = cliente;
+        this.fecha = date;
+        this.estado = estado;
     }
 
     public int getId() {
@@ -51,11 +67,11 @@ public class Pedido {
         this.cliente = cliente;
     }
 
-    public Calendar getFecha() {
+    public Date getFecha() {
         return fecha;
     }
 
-    public void setFecha(Calendar fecha) {
+    public void setFecha(Date fecha) {
         this.fecha = fecha;
     }
 

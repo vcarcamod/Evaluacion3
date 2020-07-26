@@ -52,4 +52,24 @@ public class ClienteDAO extends ConexionSql {
         }
         return cliente;
     }
+    
+    public Cliente consultarCliente(int id) throws SQLException, Exception{
+        String query = "select * from clientes where id = ?";
+        Cliente cliente = null;
+        try{
+            conectar();
+            PreparedStatement ps= obtenerPS(query);
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            if(rs.next()){
+                cliente = new Cliente(rs.getInt("id"), rs.getString("email"),
+                rs.getString("nombre"), rs.getString("apellido"));
+            }
+        }catch(Exception ex){
+            throw ex;
+        }finally{
+            desconectar();
+        }
+        return cliente;
+    }
 }

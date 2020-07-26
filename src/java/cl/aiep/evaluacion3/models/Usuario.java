@@ -24,6 +24,9 @@ public class Usuario {
         this.apellido = apellido;
     }
 
+    public Usuario() {
+    }
+
     public int getId() {
         return id;
     }

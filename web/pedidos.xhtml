@@ -1,0 +1,60 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <script type="text/javascript">
+            function handleLoginRequest(xhr, status, args) {
+                if(args.validationFailed || !args.loggedIn) {
+                    PF('dlgP').jq.effect("shake", {times:5}, 100);
+                }
+                else {
+                    PF('dlgP').hide();
+                    $('#loginLink').fadeOut();
+                }
+            }
+        </script>
+        <title>Evaluación 3</title>
+    </h:head>
+    <h:body>
+        <p:tabMenu activeIndex="#{param.i}">
+            <p:menuitem value="Inicio" outcome="index.xhtml" icon="pi pi-star">
+                <f:param name="i" value="0" />
+            </p:menuitem>
+            <p:menuitem value="Catálogo" outcome="catalogo.xhtml" icon="pi pi-search">
+                <f:param name="i" value="1" />
+            </p:menuitem>
+            <p:menuitem value="Pedidos" outcome="pedidos.xhtml" icon="pi pi-file">
+                <f:param name="i" value="2" />
+            </p:menuitem>
+        </p:tabMenu>
+        <h1>Lista de pedidos</h1>
+        <hr/>
+        
+        <h:form id="formLista">
+            <p:dataTable id="tabla" value="#{pedidoMB.lista}" var="pedido">
+                <p:column headerText="Codigo">
+                    <p:outputLabel value="#{pedido.id}" />
+                </p:column>
+                <p:column headerText="Fecha">
+                    <p:outputLabel value="#{pedido.fecha}" />
+                </p:column>
+                <p:column headerText="Cliente">
+                    <p:outputLabel value="#{pedido.cliente.nombre} #{pedido.cliente.apellido}" />
+                </p:column>
+                <p:column headerText="Email">
+                    <p:outputLabel value="#{pedido.cliente.email}" />
+                </p:column>
+                <p:column headerText="Productos">
+                    <p:commandLink value="ver productos" onclick="PF('dlgP').show();" />
+                </p:column>
+                <p:column headerText="Estado">
+                    <p:outputLabel value="#{pedido.estado}" />
+                </p:column>
+            </p:dataTable>
+        </h:form>
+    </h:body>
+</html>
+
